@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 import 'package:pay/pay.dart';
 
-class GooglePayButtonStripe extends StatelessWidget {
+class GooglePayButtonStripe extends StatefulWidget {
   final List<PaymentItem> paymentItems;
   final void Function() onComplete;
   final String amount;
@@ -30,18 +31,23 @@ class GooglePayButtonStripe extends StatelessWidget {
   });
 
   @override
+  State<GooglePayButtonStripe> createState() => _GooglePayButtonStripeState();
+}
+
+class _GooglePayButtonStripeState extends State<GooglePayButtonStripe> {
+  @override
   Widget build(BuildContext context) {
     return GooglePayButton(
         paymentConfiguration:
-        PaymentConfiguration.fromJsonString(_googlePayStripeConfig()),
+            PaymentConfiguration.fromJsonString(_googlePayStripeConfig()),
         onPaymentResult: onGooglePayResult,
-        paymentItems: paymentItems,
+        paymentItems: widget.paymentItems,
         onPressed: () {},
         loadingIndicator: const Center(
           child: CircularProgressIndicator.adaptive(),
         ),
         childOnError: const Text('Google pay is not available on this device'),
-        onError: onError);
+        onError: widget.onError);
   }
 
   Future<void> onGooglePayResult(Map<String, dynamic> paymentResult) async {
@@ -49,7 +55,7 @@ class GooglePayButtonStripe extends StatelessWidget {
       Map<String, dynamic> response = await fetchPaymentIntentClientSecret();
       final clientSecret = response['client_secret'];
       final token =
-      paymentResult['paymentMethodData']['tokenizationData']['token'];
+          paymentResult['paymentMethodData']['tokenizationData']['token'];
       final tokenJson = Map.castFrom(json.decode(token));
 
       final params = PaymentMethodParams.cardFromToken(
@@ -62,9 +68,9 @@ class GooglePayButtonStripe extends StatelessWidget {
         paymentIntentClientSecret: clientSecret,
         data: params,
       );
-     onComplete();
+      widget.onComplete();
     } catch (e) {
-      onError(e);
+      widget.onError(e);
     }
   }
 
@@ -73,7 +79,7 @@ class GooglePayButtonStripe extends StatelessWidget {
     try {
       Map<String, dynamic> body = {
         'currency': 'USD',
-        'amount': amount,
+        'amount': widget.amount,
         'payment_method_types[]': 'card'
       };
 
@@ -81,11 +87,11 @@ class GooglePayButtonStripe extends StatelessWidget {
           Uri.parse('https://api.stripe.com/v1/payment_intents'),
           body: body,
           headers: {
-            'Authorization': 'Bearer $stripeSecretKey',
+            'Authorization': 'Bearer ${widget.stripeSecretKey}',
             'Content-Type': 'application/x-www-form-urlencoded'
           });
     } catch (e) {
-      onError(e);
+      widget.onError(e);
     }
     return jsonDecode(response!.body.toString());
   }
@@ -94,7 +100,7 @@ class GooglePayButtonStripe extends StatelessWidget {
     return """{
     "provider": "google_pay",
     "data": {
-      "environment": "$environment",
+      "environment": "${widget.environment}",
       "apiVersion": 2,
       "apiVersionMinor": 0,
       "allowedPaymentMethods": [
@@ -105,7 +111,7 @@ class GooglePayButtonStripe extends StatelessWidget {
             "parameters": {
               "gateway": "stripe",
               "stripe:version": "2020-08-27",
-              "stripe:publishableKey": "$stripePublishableKey"
+              "stripe:publishableKey": "${widget.stripePublishableKey}"
             }
           },
           "parameters": {
@@ -120,8 +126,8 @@ class GooglePayButtonStripe extends StatelessWidget {
         }
       ],
       "merchantInfo": {
-        "merchantId": "$merchantId",
-        "merchantName": "$merchantName"
+        "merchantId": "${widget.merchantId}",
+        "merchantName": "${widget.merchantName}"
       },
       "transactionInfo": {
         "countryCode": "US",

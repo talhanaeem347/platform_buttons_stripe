@@ -5,7 +5,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 import 'package:pay/pay.dart';
 
-class ApplePayButtonStripe extends StatelessWidget {
+class ApplePayButtonStripe extends StatefulWidget {
   final List<PaymentItem> paymentItems;
   final void Function() onComplete;
   final String amount;
@@ -28,12 +28,17 @@ class ApplePayButtonStripe extends StatelessWidget {
   });
 
   @override
+  State<ApplePayButtonStripe> createState() => _ApplePayButtonStripeState();
+}
+
+class _ApplePayButtonStripeState extends State<ApplePayButtonStripe> {
+  @override
   Widget build(BuildContext context) {
     return ApplePayButton(
       paymentConfiguration: PaymentConfiguration.fromJsonString(
         _paymentProfile(),
       ),
-      paymentItems: paymentItems,
+      paymentItems: widget.paymentItems,
       margin: const EdgeInsets.only(top: 15),
       onPaymentResult: onApplePayResult,
       loadingIndicator: const Center(
@@ -61,22 +66,22 @@ class ApplePayButtonStripe extends StatelessWidget {
         paymentIntentClientSecret: clientSecret,
         data: params,
       );
-      onComplete();
+      widget.onComplete();
     } catch (e) {
-      onError(e);
+      widget.onError(e);
     }
   }
 
   Future<Map<String, dynamic>> fetchPaymentIntentClientSecret() async {
     final url = Uri.parse('https://api.stripe.com/v1/payment_intents');
     final Map<String, dynamic> requestData = {
-      'amount': amount,
+      'amount': widget.amount,
       'currency': 'usd',
     };
     final response = await http.post(
       url,
       headers: {
-        'Authorization': 'Bearer $stripeSecretKey',
+        'Authorization': 'Bearer ${widget.stripeSecretKey}',
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: requestData,
@@ -88,8 +93,8 @@ class ApplePayButtonStripe extends StatelessWidget {
     return """{
       "provider": "apple_pay",
       "data": {
-        "merchantIdentifier": "$merchantId",
-        "displayName": "$merchantName",
+        "merchantIdentifier": "${widget.merchantId}",
+        "displayName": "${widget.merchantName}",
         "merchantCapabilities": ["3DS"],
         "allowedPaymentMethods": [
           {
@@ -99,7 +104,7 @@ class ApplePayButtonStripe extends StatelessWidget {
               "parameters": {
                 "gateway": "stripe",
                 "stripe:version": "2020-08-27",
-                "stripe:publishableKey": "$stripePublishableKey"
+                "stripe:publishableKey": "${widget.stripePublishableKey}"
               }
             },
             "parameters": {
