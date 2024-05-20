@@ -62,6 +62,7 @@ class GooglePayButtonStripe extends StatelessWidget {
         paymentIntentClientSecret: clientSecret,
         data: params,
       );
+     onComplete();
     } catch (e) {
       onError(e);
     }
