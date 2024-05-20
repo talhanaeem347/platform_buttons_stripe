@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:pay/pay.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:platform_buttons_stripe/platform_buttons_stripe.dart';
 
-class PlatformButtonsStripe extends StatelessWidget {
+class PlatformButtonsStripe extends StatefulWidget {
   final List<PaymentItem> paymentItems;
   final void Function() onComplete;
   final String amountInCents;
@@ -29,31 +29,42 @@ class PlatformButtonsStripe extends StatelessWidget {
   });
 
   @override
+  State<PlatformButtonsStripe> createState() => _PlatformButtonsStripeState();
+}
+
+class _PlatformButtonsStripeState extends State<PlatformButtonsStripe> {
+  @override
+  void initState() {
+    super.initState();
+    Stripe.publishableKey = widget.stripePublishableKey;
+    Stripe.merchantIdentifier = widget.merchantId;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Platform.isAndroid
-          ? GooglePayButtonStripe(
-        merchantName: merchantName,
-        merchantId: merchantId,
-        stripeSecretKey: stripeSecretKey,
-        amount: amountInCents,
-        environment:
-        environment == AppEnvironment.test ? 'TEST' : 'PRODUCTION',
-        onComplete: onComplete,
-        paymentItems: paymentItems,
-        onError: onError,
-        stripePublishableKey: stripePublishableKey,
-      )
-          : ApplePayButtonStripe(
-        merchantName: merchantName,
-        merchantId: merchantId,
-        stripeSecretKey: stripeSecretKey,
-        amount: amountInCents,
-        onComplete: onComplete,
-        paymentItems: paymentItems,
-        onError: onError,
-        stripePublishableKey: stripePublishableKey,
-      ),
-    );
+    return Platform.isAndroid
+        ? GooglePayButtonStripe(
+            merchantName: widget.merchantName,
+            merchantId: widget.merchantId,
+            stripeSecretKey: widget.stripeSecretKey,
+            amount: widget.amountInCents,
+            environment: widget.environment == AppEnvironment.test
+                ? 'TEST'
+                : 'PRODUCTION',
+            onComplete: widget.onComplete,
+            paymentItems: widget.paymentItems,
+            onError: widget.onError,
+            stripePublishableKey: widget.stripePublishableKey,
+          )
+        : ApplePayButtonStripe(
+            merchantName: widget.merchantName,
+            merchantId: widget.merchantId,
+            stripeSecretKey: widget.stripeSecretKey,
+            amount: widget.amountInCents,
+            onComplete: widget.onComplete,
+            paymentItems: widget.paymentItems,
+            onError: widget.onError,
+            stripePublishableKey: widget.stripePublishableKey,
+          );
   }
 }
