@@ -1,14 +1,13 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:platform_buttons_stripe/platform_buttons_stripe.dart';
 
 void main() {
   PlatformButtonsStripe.init(
-      stripePublishableKey:
-          'pk_test_51PCLOlHyq5Ko4yU39KOsjiy04gLCU3JpyireVyFL48mw2SPNGuUNFLI6vV5AadD77ubhd7MCjJCjfr0qfx06FLtE003S5zZm4w',
-      stripeSecretKey:
-          'sk_test_51PCLOlHyq5Ko4yU3pb4ZaSMl3a0W0c9TSalcEIXrD6wrdOLNsKHRef871ztus0lQGfKqjCgliCyTpPffwpkjS08g00Vvcej6OU',
+      stripePublishableKey: 'pk_test_5*******************zZm4w',
+      stripeSecretKey: 'sk_test_5*******************ej6OU',
       merchantId: '01234567890123456789',
       merchantName: 'merchantName');
   runApp(const MyApp());
@@ -44,16 +43,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Amount in cents: $amountInCents'),
-        actions: [
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  amountInCents = (int.parse(amountInCents) + 1000).toString();
-                });
-              },
-              icon: Icon(Icons.add)),
-        ],
+        title: Platform.isAndroid
+            ? const Text('Google Pay Example')
+            : const Text('Apple Pay Example'),
       ),
       body: Center(
         child: PlatformButtonsStripe(
