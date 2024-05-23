@@ -53,8 +53,9 @@ class _ApplePayButtonStripeState extends State<ApplePayButtonStripe> {
 
   Future<void> onApplePayResult(paymentResult) async {
     try {
-      final token = await Stripe.instance.createApplePayToken(paymentResult);
       widget.onProcessing?.call();
+      final token = await Stripe.instance.createApplePayToken(paymentResult);
+      
 
       final response = await fetchPaymentIntentClientSecret();
       final clientSecret = response['client_secret'];
