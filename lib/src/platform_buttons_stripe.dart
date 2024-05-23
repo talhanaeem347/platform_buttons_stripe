@@ -8,6 +8,7 @@ import 'package:platform_buttons_stripe/platform_buttons_stripe.dart'; // Assumi
 class PlatformButtonsStripe extends StatelessWidget {
   final List<PaymentItem> paymentItems;
   final void Function() onComplete;
+  final void Function()? onProcessing;
   final String amountInCents;
   final void Function(Object?) onError;
   final AppEnvironment environment;
@@ -16,6 +17,7 @@ class PlatformButtonsStripe extends StatelessWidget {
     super.key,
     required this.paymentItems,
     required this.onComplete,
+    this.onProcessing,
     required this.amountInCents,
     required this.onError,
     this.environment = AppEnvironment.production,
@@ -53,6 +55,7 @@ class PlatformButtonsStripe extends StatelessWidget {
       environment: environment == AppEnvironment.test ? 'TEST' : 'PRODUCTION',
       onComplete: onComplete,
       paymentItems: paymentItems,
+      onProcessing: onProcessing,
       onError: onError,
       stripePublishableKey: _stripePublishableKey,
     )
@@ -62,6 +65,7 @@ class PlatformButtonsStripe extends StatelessWidget {
       stripeSecretKey: _stripeSecretKey,
       amount: amountInCents,
       onComplete: onComplete,
+      onProcessing: onProcessing,
       paymentItems: paymentItems,
       onError: onError,
       stripePublishableKey: _stripePublishableKey,
