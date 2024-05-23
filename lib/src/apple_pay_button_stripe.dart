@@ -8,6 +8,7 @@ import 'package:pay/pay.dart';
 class ApplePayButtonStripe extends StatefulWidget {
   final List<PaymentItem> paymentItems;
   final void Function() onComplete;
+  final void Function()? onProcessing;
   final String amount;
   final void Function(Object?) onError;
   final String stripePublishableKey;
@@ -19,6 +20,7 @@ class ApplePayButtonStripe extends StatefulWidget {
     super.key,
     required this.paymentItems,
     required this.onComplete,
+    this.onProcessing,
     required this.amount,
     required this.onError,
     required this.stripePublishableKey,
@@ -52,6 +54,7 @@ class _ApplePayButtonStripeState extends State<ApplePayButtonStripe> {
   Future<void> onApplePayResult(paymentResult) async {
     try {
       final token = await Stripe.instance.createApplePayToken(paymentResult);
+      widget.onProcessing?.call();
 
       final response = await fetchPaymentIntentClientSecret();
       final clientSecret = response['client_secret'];
