@@ -9,6 +9,7 @@ import 'package:pay/pay.dart';
 class GooglePayButtonStripe extends StatefulWidget {
   final List<PaymentItem> paymentItems;
   final void Function() onComplete;
+  final void Function()? onProcessing;
   final String amount;
   final void Function(Object?) onError;
   final String stripePublishableKey;
@@ -21,6 +22,7 @@ class GooglePayButtonStripe extends StatefulWidget {
     super.key,
     required this.paymentItems,
     required this.onComplete,
+    this.onProcessing,
     required this.amount,
     required this.onError,
     required this.stripePublishableKey,
@@ -52,6 +54,7 @@ class _GooglePayButtonStripeState extends State<GooglePayButtonStripe> {
 
   Future<void> onGooglePayResult(Map<String, dynamic> paymentResult) async {
     try {
+      widget.onProcessing?.call();
       Map<String, dynamic> response = await fetchPaymentIntentClientSecret();
       final clientSecret = response['client_secret'];
       final token =
