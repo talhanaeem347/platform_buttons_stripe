@@ -129,7 +129,7 @@ class _ApplePayButtonStripeState extends State<ApplePayButtonStripe> {
           "masterCard"
         ],
         "countryCode": "US",
-        "currencyCode": "USD",      
+        "currencyCode": "USD"      
       }
     }""";
   }
