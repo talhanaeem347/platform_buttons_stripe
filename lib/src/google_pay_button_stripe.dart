@@ -17,6 +17,7 @@ class GooglePayButtonStripe extends StatefulWidget {
   final String environment;
   final String merchantId;
   final String merchantName;
+  final String customerId;
 
   const GooglePayButtonStripe({
     super.key,
@@ -30,6 +31,7 @@ class GooglePayButtonStripe extends StatefulWidget {
     required this.environment,
     required this.merchantId,
     required this.merchantName,
+    required this.customerId,
   });
 
   @override
@@ -83,7 +85,8 @@ class _GooglePayButtonStripeState extends State<GooglePayButtonStripe> {
       Map<String, dynamic> body = {
         'currency': 'USD',
         'amount': widget.amount,
-        'payment_method_types[]': 'card'
+        'payment_method_types[]': 'card',
+        'customer': widget.customerId,
       };
 
       response = await http.post(
