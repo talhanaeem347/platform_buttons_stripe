@@ -15,6 +15,7 @@ class ApplePayButtonStripe extends StatefulWidget {
   final String stripeSecretKey;
   final String merchantId;
   final String merchantName;
+  final String customerId;
 
   const ApplePayButtonStripe({
     super.key,
@@ -27,6 +28,7 @@ class ApplePayButtonStripe extends StatefulWidget {
     required this.stripeSecretKey,
     required this.merchantId,
     required this.merchantName,
+    required this.customerId,
   });
 
   @override
@@ -81,6 +83,8 @@ class _ApplePayButtonStripeState extends State<ApplePayButtonStripe> {
     final Map<String, dynamic> requestData = {
       'amount': widget.amount,
       'currency': 'usd',
+        'customer': widget.customerId
+      ,
     };
     final response = await http.post(
       url,
