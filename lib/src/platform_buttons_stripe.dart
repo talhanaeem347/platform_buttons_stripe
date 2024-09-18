@@ -12,6 +12,7 @@ class PlatformButtonsStripe extends StatelessWidget {
   final String amountInCents;
   final void Function(Object?) onError;
   final AppEnvironment environment;
+  final String customerId;
 
   const PlatformButtonsStripe({
     super.key,
@@ -21,6 +22,7 @@ class PlatformButtonsStripe extends StatelessWidget {
     required this.amountInCents,
     required this.onError,
     this.environment = AppEnvironment.production,
+    required this.customerId,
   });
 
   static late final String _stripePublishableKey;
@@ -58,6 +60,7 @@ class PlatformButtonsStripe extends StatelessWidget {
       onProcessing: onProcessing,
       onError: onError,
       stripePublishableKey: _stripePublishableKey,
+      customerId: customerId,
     )
         : ApplePayButtonStripe(
       merchantName: _merchantName,
@@ -69,6 +72,7 @@ class PlatformButtonsStripe extends StatelessWidget {
       paymentItems: paymentItems,
       onError: onError,
       stripePublishableKey: _stripePublishableKey,
+      customerId: customerId,
     );
   }
 }
